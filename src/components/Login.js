@@ -3,6 +3,8 @@ import React from 'react'
 import Center from './Center'
 import useForm from '../hooks/useForm'
 import { ENDPOINTS, createAPIEndpoint } from '../api'
+import useStateContext from '../hooks/useStateContext'
+import { useNavigate } from 'react-router-dom'
 
 const getFreshModel = () => ({
   name: '',
@@ -10,6 +12,10 @@ const getFreshModel = () => ({
 })
 
 export default function Login() {
+
+  const {context, setContext} = useStateContext();
+
+  const navigate = useNavigate();
 
   const {
     values,
@@ -24,7 +30,10 @@ export default function Login() {
     if (validate())
     createAPIEndpoint(ENDPOINTS.participant)
     .post(values)
-    .then(res => console.log(res))
+    .then(res => {
+        setContext({ participantId: res.data.participantId })
+        navigate('/quiz')
+    })
     .catch(err => console.log(err))
   }
 
@@ -45,7 +54,7 @@ export default function Login() {
         Quiz App
       </Typography>
       <Box sx={{'& .MuiTextField-root' : {m: 1,width: '90%'}}}> 
-        <form noValidate autoComplete="off" onSubmit={login}>
+        <form noValidate autoComplete="on" onSubmit={login}>
           <TextField
            label="Email"
            name="email"
