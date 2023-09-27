@@ -15,11 +15,15 @@ if (localStorage.getItem('context') === null )
 export default function useStateContext() {
    const {context, setContext} = useContext(stateContext)   
    return {context, 
-    setContext: obj => { setContext({...context, ...obj})} 
+    setContext: obj => { setContext({...context, ...obj})},
+      resetContext: () => {
+      localStorage.removeItem('context')
+      setContext(getFreshContext())
+    } 
   }
 }
 
-export function ContextProvider({children}) {
+  export function ContextProvider({children}) {
   const [context, setContext] = useState(getFreshContext()) 
   
   useEffect(() => {

@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import useStateContext from '../hooks/useStateContext'
 import { BASE_URL, ENDPOINTS, createAPIEndpoint } from '../api'
 import { Box, Card, CardContent, CardHeader, CardMedia, LinearProgress, List, ListItemButton, Typography } from '@mui/material'
 import { getFormatedTime } from '../helper'
+import { useNavigate } from 'react-router-dom'
 
 export default function Quiz() {
 
@@ -13,16 +14,16 @@ export default function Quiz() {
 
   const timerRef = useRef(null);
 
-  let timer = null;
+  const navigate = useNavigate()
 
   const startTimer = () => {
-   if (timerRef.current === null) { // Check if the timer is already running
+   if (timerRef.current === null) { 
      const startTime = performance.now();
-     timerRef.current = setInterval(() => {
+       timerRef.current = setInterval(() => {
        const currentTime = performance.now();
        const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
        setTimeTaken(elapsedSeconds);
-     }, [1000]); // Use 1000 milliseconds (1 second) as the interval
+     }, [1000]);  
    }
  };
 
@@ -49,11 +50,12 @@ export default function Quiz() {
       selected:optionIdx
    })
   
-   if (qnIndex < 4){
+   if (qnIndex < 9){
       setContext({selectedOption:[...temp]})
       setQnIndex(qnIndex+1)
    }
    else{ setContext({selectedOption:[...temp], timeTaken})
+         navigate("/result")
    }
   }
 
@@ -63,10 +65,10 @@ export default function Quiz() {
          sx={{maxWidth:640, mx:'auto', mt:'5',
          '& .MuiCardHeader-action':{m:0, alignSelf:'center'}}} >
             <CardHeader
-            title={ 'Question ' + (qnIndex + 1) + ' of 5 ' }
+            title={ 'Question ' + (qnIndex + 1) + ' of 10 ' }
             action={<Typography>{getFormatedTime(timeTaken)}</Typography>}/>
             <Box>
-               <LinearProgress variant="determinate" value={(qnIndex+1)*100/5} />
+               <LinearProgress variant="determinate" value={(qnIndex+1)*100/10} />
             </Box>
             {qns[qnIndex].imageName != null
                ? <CardMedia
