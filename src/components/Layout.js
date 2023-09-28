@@ -9,7 +9,7 @@ const {resetContext} = useStateContext()
 const navigate = useNavigate()
 const logout = () => {
       resetContext()
-      navigate('/login')
+      navigate("/")
 }  
     
   return (
@@ -21,7 +21,7 @@ const logout = () => {
                 sx={{flexGrow : 1}}>
                 Quiz App
             </Typography>
-            <Button onClick={logout}></Button>
+            <Button onClick={logout}>Logout</Button>
         </Toolbar>
     </AppBar>
     <Container>

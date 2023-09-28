@@ -7,7 +7,7 @@ if (localStorage.getItem('context') === null )
     localStorage.setItem('context',JSON.stringify({
         participantId:0,
         timetaken:0,
-        selectedOption:[]
+        selectedOptions:[]
         }))
  return JSON.parse(localStorage.getItem('context'))       
 }

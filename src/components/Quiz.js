@@ -44,17 +44,17 @@ export default function Quiz() {
   },[]) 
 
   const updateAnswer = (qnId,optionIdx) => {
-   const temp =[...context.selectedOption]
+   const temp =[...context.selectedOptions]
       temp.push({
       qnId,
       selected:optionIdx
    })
   
    if (qnIndex < 9){
-      setContext({selectedOption:[...temp]})
+      setContext({selectedOptions:[...temp]})
       setQnIndex(qnIndex+1)
    }
-   else{ setContext({selectedOption:[...temp], timeTaken})
+   else{ setContext({selectedOptions:[...temp], timeTaken})
          navigate("/result")
    }
   }
