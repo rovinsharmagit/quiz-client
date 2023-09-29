@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import useStateContext from '../hooks/useStateContext'
 import { ENDPOINTS, createAPIEndpoint } from '../api'
-import { Box, Button, Card, Typography } from '@mui/material'
+import { Alert, Box, Button, Card, CardContent, CardMedia, Typography } from '@mui/material'
 import { getFormatedTime } from '../helper'
 import { green } from '@mui/material/colors'
+import { useNavigate } from 'react-router-dom'
+import Answer from './Answer'
 
 export default function Result() {
   
@@ -21,7 +23,7 @@ export default function Result() {
       const qna = context.selectedOptions
       .map(x => ({
         ...x,
-        ...(res.data.find(y => y.qnId == x.qnId))
+        ...(res.data.find(y => y.qnId === x.qnId))
       }))
       setQnAnswers(qna)
       calculateScore(qna)
@@ -31,10 +33,12 @@ export default function Result() {
 
   const calculateScore = qna => {
     let tempScore = qna.reduce((acc, curr) => {
-      return curr.answer == curr.seleted ? acc + 1 : acc;
-    }, 0)
-    setScore(tempScore)
-  }
+      const isCorrect = curr.answer === curr.selected;
+      return isCorrect ? acc + 10 : acc;
+    }, 0);
+  
+    setScore(tempScore);
+  };
 
   const restart = () => {
     setContext({
@@ -44,7 +48,24 @@ export default function Result() {
     navigate("/quiz")
   }
 
+  const submitScore = () => {
+    createAPIEndpoint(ENDPOINTS.participant)
+    .put(context.participantId, {
+      participantId: context.participantId,
+      score: score,
+      timeTaken: context.timeTaken
+    })
+    .then(res => {
+      setShowAlert(true)
+      setTimeout(() => {
+        setShowAlert(false)
+      }, 4000);
+    })
+    .catch(err => {console.log(err)})
+  }
+
   return (
+    <>
     <Card sx={{ mt: 5, display: 'flex', width: '100%', maxWidth: 640, mx: 'auto' }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
         <CardContent sx={{ flex: '1 0 auto', textAlign: 'center' }}>
@@ -55,7 +76,7 @@ export default function Result() {
             YOUR SCORE
           </Typography>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>
-            <Typography variant="span" color={ green [1000]}>
+            <Typography variant="span" color={green[500]}>
               {score}
             </Typography>/100
           </Typography>
@@ -76,8 +97,25 @@ export default function Result() {
           onClick={restart}>
           Re-try
           </Button>
+          <Alert
+          severity="success"
+          variant="string"
+          sx={{
+            width: '60%',
+            margin: 'auto',
+            visibility: showAlert? 'visible' : 'hidden'
+          }}>
+          Score Updated
+          </Alert>
         </CardContent>
       </Box>
+      <CardMedia
+        component= "img"
+        sx={{ width: 220 }}
+        image="./result.png"
+      />
     </Card>
+    <Answer qnAnswers={qnAnswers} />
+    </>
   )
 }
